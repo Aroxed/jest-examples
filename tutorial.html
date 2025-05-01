@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jest Testing Tutorial</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        code {
+            background-color: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .note {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .warning {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .success {
+            background-color: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jest Testing Tutorial</h1>
+    
+    <h2>Table of Contents</h2>
+    <ul>
+        <li><a href="#introduction">Introduction to Jest</a></li>
+        <li><a href="#installation">Installation and Setup</a></li>
+        <li><a href="#configuration">Configuration</a></li>
+        <li><a href="#key-concepts">Key Concepts</a></li>
+        <li><a href="#examples">Example Structure</a></li>
+        <li><a href="#running-tests">Running Tests</a></li>
+        <li><a href="#best-practices">Best Practices</a></li>
+        <li><a href="#advanced-topics">Advanced Topics</a></li>
+    </ul>
+
+    <h2 id="introduction">Introduction to Jest</h2>
+    <p>Jest is a JavaScript testing framework designed to ensure correctness of any JavaScript codebase. It allows you to write tests with an approachable, familiar and feature-rich API that gives you results quickly.</p>
+
+    <div class="note">
+        <h3>Why Jest?</h3>
+        <ul>
+            <li>Zero configuration required</li>
+            <li>Built-in code coverage</li>
+            <li>Snapshot testing</li>
+            <li>Interactive mode</li>
+            <li>Excellent documentation</li>
+            <li>Large community support</li>
+        </ul>
+    </div>
+
+    <h2 id="installation">Installation and Setup</h2>
+    <h3>Prerequisites</h3>
+    <ul>
+        <li>Node.js (version 14 or higher)</li>
+        <li>npm (comes with Node.js)</li>
+        <li>A code editor (VS Code recommended)</li>
+    </ul>
+
+    <h3>Installation Steps</h3>
+    <pre><code># Create a new project directory
+mkdir jest-tutorial
+cd jest-tutorial
+
+# Initialize a new npm project
+npm init -y
+
+# Install Jest and related dependencies
+npm install --save-dev jest @types/jest vite vitest
+
+# Add test script to package.json
+{
+  "scripts": {
+    "test": "vitest",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage"
+  }
+}</code></pre>
+
+    <h2 id="configuration">Configuration</h2>
+    <p>Create a <code>vite.config.js</code> file in your project root:</p>
+    <pre><code>import { defineConfig } from 'vite'
+
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'node',
+    include: ['**/*.{test,spec}.{js,jsx,ts,tsx}'],
+    coverage: {
+      reporter: ['text', 'json', 'html'],
+    },
+  },
+})</code></pre>
+
+    <h2 id="key-concepts">Key Concepts</h2>
+    
+    <h3>1. Test Structure</h3>
+    <pre><code>describe('Test Suite', () => {
+    test('individual test case', () => {
+        expect(actual).toBe(expected);
+    });
+});</code></pre>
+
+    <h3>2. Common Matchers</h3>
+    <table>
+        <tr>
+            <th>Matcher</th>
+            <th>Description</th>
+            <th>Example</th>
+        </tr>
+        <tr>
+            <td><code>toBe()</code></td>
+            <td>Exact equality</td>
+            <td><code>expect(2 + 2).toBe(4)</code></td>
+        </tr>
+        <tr>
+            <td><code>toEqual()</code></td>
+            <td>Deep equality</td>
+            <td><code>expect({a: 1}).toEqual({a: 1})</code></td>
+        </tr>
+        <tr>
+            <td><code>toBeTruthy()</code></td>
+            <td>Truthy values</td>
+            <td><code>expect(true).toBeTruthy()</code></td>
+        </tr>
+        <tr>
+            <td><code>toBeFalsy()</code></td>
+            <td>Falsy values</td>
+            <td><code>expect(false).toBeFalsy()</code></td>
+        </tr>
+        <tr>
+            <td><code>toContain()</code></td>
+            <td>Array/string contains</td>
+            <td><code>expect([1,2,3]).toContain(2)</code></td>
+        </tr>
+        <tr>
+            <td><code>toThrow()</code></td>
+            <td>Exception testing</td>
+            <td><code>expect(() => throwError()).toThrow()</code></td>
+        </tr>
+    </table>
+
+    <h3>3. Async Testing</h3>
+    <pre><code>// Promise-based
+test('async test with promises', () => {
+    return asyncFunction().then(data => {
+        expect(data).toBe('expected');
+    });
+});
+
+// Async/await
+test('async test with async/await', async () => {
+    const result = await asyncFunction();
+    expect(result).toBe('expected');
+});
+
+// Error handling
+test('async error handling', async () => {
+    await expect(asyncFunction()).rejects.toThrow('error message');
+});</code></pre>
+
+    <h3>4. Mocking</h3>
+    <pre><code>// Mock a function
+const mockFn = vi.fn();
+mockFn.mockReturnValue('mocked value');
+
+// Mock a module
+vi.mock('./module', () => ({
+    function: () => 'mocked'
+}));
+
+// Mock implementation
+mockFn.mockImplementation(() => {
+    // custom implementation
+    return 'custom value';
+});
+
+// Mock async function
+mockFn.mockResolvedValue('async value');
+mockFn.mockRejectedValue(new Error('async error'));</code></pre>
+
+    <h3>5. Snapshot Testing</h3>
+    <pre><code>test('snapshot test', () => {
+    const component = renderComponent();
+    expect(component).toMatchSnapshot();
+});
+
+// Update snapshots
+// Run: npm test -- -u</code></pre>
+
+    <h2 id="examples">Example Structure</h2>
+    <p>Each example in this repository demonstrates different aspects of Jest testing:</p>
+    <ul>
+        <li><strong>Basic Testing:</strong> Simple function testing and assertions</li>
+        <li><strong>Async Testing:</strong> Testing asynchronous code and promises</li>
+        <li><strong>Mocking:</strong> Function and module mocking techniques</li>
+        <li><strong>Snapshot Testing:</strong> UI component testing</li>
+        <li><strong>Integration Testing:</strong> Testing multiple components together</li>
+    </ul>
+
+    <h2 id="running-tests">Running Tests</h2>
+    <pre><code># Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Generate coverage report
+npm run test:coverage
+
+# Run specific test file
+npm test -- path/to/test.js
+
+# Run tests matching a pattern
+npm test -- -t "pattern"</code></pre>
+
+    <div class="note">
+        <h3>Test Coverage</h3>
+        <p>Jest provides built-in code coverage reporting. The coverage report shows:</p>
+        <ul>
+            <li>Statement coverage</li>
+            <li>Branch coverage</li>
+            <li>Function coverage</li>
+            <li>Line coverage</li>
+        </ul>
+    </div>
+
+    <h2 id="best-practices">Best Practices</h2>
+    <div class="note">
+        <h3>Writing Good Tests</h3>
+        <ul>
+            <li>Write tests before implementing features (TDD)</li>
+            <li>Keep tests simple and focused</li>
+            <li>Use descriptive test names</li>
+            <li>Test behavior, not implementation</li>
+            <li>Maintain test independence</li>
+            <li>Follow the AAA pattern (Arrange, Act, Assert)</li>
+            <li>Use meaningful assertions</li>
+            <li>Keep test files organized</li>
+        </ul>
+    </div>
+
+    <h2 id="advanced-topics">Advanced Topics</h2>
+    <h3>1. Test Hooks</h3>
+    <pre><code>beforeAll(() => {
+    // Runs once before all tests
+});
+
+afterAll(() => {
+    // Runs once after all tests
+});
+
+beforeEach(() => {
+    // Runs before each test
+});
+
+afterEach(() => {
+    // Runs after each test
+});</code></pre>
+
+    <h3>2. Custom Matchers</h3>
+    <pre><code>expect.extend({
+    toBeWithinRange(received, floor, ceiling) {
+        const pass = received >= floor && received <= ceiling;
+        return {
+            message: () =>
+                `expected ${received} to be within range ${floor} - ${ceiling}`,
+            pass,
+        };
+    },
+});</code></pre>
+
+    <h3>3. Test Timeouts</h3>
+    <pre><code>test('slow test', async () => {
+    // Increase timeout for this test
+}, 10000);</code></pre>
+
+    <div class="warning">
+        <h3>Common Pitfalls</h3>
+        <ul>
+            <li>Not cleaning up after tests</li>
+            <li>Testing implementation details</li>
+            <li>Over-mocking</li>
+            <li>Not handling async operations properly</li>
+            <li>Writing brittle tests</li>
+        </ul>
+    </div>
+
+    <div class="success">
+        <h3>Tips for Success</h3>
+        <ul>
+            <li>Start with simple tests and gradually increase complexity</li>
+            <li>Use the watch mode during development</li>
+            <li>Regularly check test coverage</li>
+            <li>Keep your test files organized and maintainable</li>
+            <li>Use meaningful test descriptions</li>
+            <li>Follow the testing pyramid (unit > integration > e2e)</li>
+        </ul>
+    </div>
+</body>
+</html> 
